@@ -3,8 +3,8 @@ defmodule AlchemistChecklist.User do
 
   schema "users" do
     field :email, :string
-    field :password_hash, :string
     field :password, :string, virtual: true
+    field :password_hash, :string
 
     timestamps()
   end
@@ -14,7 +14,8 @@ defmodule AlchemistChecklist.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:email, :password_hash])
-    |> validate_required([:email, :password_hash])
+    |> cast(params, [:email, :password])
+    |> validate_format(:email, ~r/@/)
+    |> validate_required([:email])
   end
 end
