@@ -15,7 +15,18 @@ defmodule AlchemistChecklist.User do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:email, :password])
+    |> validate_required([:email, :password])
     |> validate_format(:email, ~r/@/)
-    |> validate_required([:email])
+    |> validate_length(:password, min: 6)
+    |> put_password_hash
+  end
+
+  def put_password_hash(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
+        put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
+      _ ->
+        changeset
+    end
   end
 end
